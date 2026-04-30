@@ -1,0 +1,35 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>PlayerHub</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">PlayerHub</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  @if (isLoading()) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  } @else if (hasPlayers()) {
+    <ion-list>
+      @for (player of players(); track player.id) {
+        <ion-item>
+          <ion-label>
+            <h2>{{ player.name }}</h2>
+            <p>{{ player.position }} · {{ player.team }} · #{{ player.number }}</p>
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  } @else {
+    <div id="container">
+      <strong>Bienvenido a PlayerHub</strong>
+      <p>No hay jugadores registrados aún.</p>
+    </div>
+  }
+</ion-content>
