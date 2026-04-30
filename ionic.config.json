@@ -1,0 +1,7 @@
+{
+  "name": "playerhub-frontend",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
