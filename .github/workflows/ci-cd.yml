@@ -1,0 +1,166 @@
+name: CI/CD - Ionic Frontend
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write          # imprescindible para Workload Identity Federation
+  pull-requests: write     # para que Sonar comente PRs
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────
+  # 1. Tests con cobertura + build de producción
+  # ─────────────────────────────────────────────────────────────────────
+  build-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # Sonar necesita historial completo
+
+      - name: Set up Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Test with coverage
+        # ubuntu-latest trae google-chrome-stable preinstalado.
+        # ChromeHeadlessCI (definido en karma.conf.js) usa --no-sandbox.
+        run: npm run test:ci
+
+      - name: Production build
+        run: npm run build -- --configuration=production
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload dist (www/)
+        uses: actions/upload-artifact@v4
+        with:
+          name: www
+          path: www/
+          if-no-files-found: error
+          retention-days: 7
+
+  # ─────────────────────────────────────────────────────────────────────
+  # 2. SonarCloud (lee coverage/app/lcov.info)
+  # ─────────────────────────────────────────────────────────────────────
+  sonar:
+    name: SonarCloud analysis
+    needs: build-test
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v3
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  # ─────────────────────────────────────────────────────────────────────
+  # 3. Build + push de la imagen Docker (solo push a main)
+  # ─────────────────────────────────────────────────────────────────────
+  docker:
+    name: Docker build & push
+    needs: build-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compute image tag
+        id: tag
+        run: echo "tag=sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOYER_SA }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ vars.GCP_REGION }}-docker.pkg.dev --quiet
+
+      - name: Build image
+        run: |
+          docker build \
+            -t ${{ vars.GCP_ARTIFACT_REGISTRY }}/frontend:${{ steps.tag.outputs.tag }} \
+            -t ${{ vars.GCP_ARTIFACT_REGISTRY }}/frontend:latest \
+            .
+
+      - name: Push image
+        run: |
+          docker push ${{ vars.GCP_ARTIFACT_REGISTRY }}/frontend:${{ steps.tag.outputs.tag }}
+          docker push ${{ vars.GCP_ARTIFACT_REGISTRY }}/frontend:latest
+
+  # ─────────────────────────────────────────────────────────────────────
+  # 4. Despliegue a Cloud Run
+  # ─────────────────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy to Cloud Run
+    needs: docker
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOYER_SA }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy playerhub-frontend \
+            --image=${{ vars.GCP_ARTIFACT_REGISTRY }}/frontend:sha-${GITHUB_SHA::7} \
+            --region=${{ vars.GCP_REGION }} \
+            --service-account=${{ vars.GCP_RUNTIME_SA }} \
+            --allow-unauthenticated \
+            --port=8080 \
+            --cpu=1 \
+            --memory=128Mi \
+            --max-instances=2 \
+            --quiet
+
+      - name: Print service URL
+        run: |
+          URL=$(gcloud run services describe playerhub-frontend \
+            --region=${{ vars.GCP_REGION }} \
+            --format='value(status.url)')
+          echo "::notice title=Service URL::playerhub-frontend → $URL"

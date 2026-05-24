@@ -29,7 +29,9 @@ module.exports = function (config) {
       subdir: '.',
       reporters: [
         { type: 'html' },
-        { type: 'text-summary' }
+        { type: 'text-summary' },
+        // lcovonly: lo consume SonarCloud para mostrar cobertura.
+        { type: 'lcovonly', file: 'lcov.info' }
       ]
     },
     reporters: ['progress', 'kjhtml'],
@@ -38,6 +40,14 @@ module.exports = function (config) {
     logLevel: config.LOG_INFO,
     autoWatch: true,
     browsers: ['Chrome'],
+    customLaunchers: {
+      // Chrome headless con --no-sandbox: imprescindible en runners
+      // (CI, contenedores) donde no se puede usar el sandbox de Chrome.
+      ChromeHeadlessCI: {
+        base: 'ChromeHeadless',
+        flags: ['--no-sandbox', '--disable-gpu']
+      }
+    },
     singleRun: false,
     restartOnFileChange: true
   });
