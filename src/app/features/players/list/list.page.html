@@ -25,6 +25,7 @@
     <ion-searchbar
       placeholder="Buscar por nombre"
       [debounce]="400"
+      [value]="searchTerm()"
       (ionInput)="onSearch($event)">
     </ion-searchbar>
   </ion-toolbar>

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import {
@@ -49,6 +49,9 @@ export class ListPage implements OnInit {
   readonly isLoading = this.playerService.isLoading;
   readonly isAuthenticated = this.auth.isAuthenticated;
 
+  /** Valor del searchbar. Permite resetearlo programáticamente. */
+  readonly searchTerm = signal('');
+
   constructor() {
     addIcons({ logOutOutline, logInOutline, personAddOutline, addOutline });
   }
@@ -57,17 +60,28 @@ export class ListPage implements OnInit {
     this.playerService.list().subscribe();
   }
 
-  // Llamado por ion-searchbar con debounce de 400 ms (config en el HTML).
-  // Si el input está vacío re-cargamos sin filtro.
+  /**
+   *  Limpiamos el campo de busqueda cada vez que entramos a la página, para evitar residuos.
+   */
+  ionViewWillEnter() {
+    if (this.searchTerm()) {
+      this.searchTerm.set('');
+      this.playerService.list().subscribe();
+    }
+  }
+
   onSearch(event: Event) {
     const target = event.target as HTMLIonSearchbarElement;
     const value = (target.value || '').trim();
+    this.searchTerm.set(value);
     this.playerService.list(value ? { name: value } : {}).subscribe();
   }
 
   async logout() {
     await this.auth.logout();
-    // Un usuario puede querer hacer logout y seguir consultando la información como invitado
-    // this.router.navigate(['/auth/login']);
+    // No navegamos: el usuario puede seguir como invitado.
+    // Pero sí limpiamos el filtro porque "estamos volviendo" al estado base.
+    this.searchTerm.set('');
+    this.playerService.list().subscribe();
   }
 }
