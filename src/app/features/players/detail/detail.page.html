@@ -1,5 +1,8 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/players"></ion-back-button>
+    </ion-buttons>
     <ion-title>{{ player()?.name || 'Detalle' }}</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -7,17 +10,90 @@
 <ion-content class="ion-padding">
   <ion-spinner *ngIf="isLoading()"></ion-spinner>
 
-  <ng-container *ngIf="player() as p">
+  <ng-container *ngIf="!isLoading() && player() as p">
+    <!-- Datos básicos -->
+    <img
+      *ngIf="p.photo"
+      [src]="p.photo"
+      [alt]="p.name"
+      style="max-width: 200px; border-radius: 8px; display: block; margin-bottom: 16px" />
+
     <h2>{{ p.name }}</h2>
-    <p>{{ p.team }} · {{ p.league }}</p>
-    <p>Posición: {{ p.position }}</p>
-    <p>Edad: {{ p.age }}</p>
-    <img *ngIf="p.photo" [src]="p.photo" [alt]="p.name" style="max-width: 200px" />
-    <h3>Comentarios</h3>
-    <ul>
-      <li *ngFor="let c of p.comments">
-        <strong>{{ c.author }}</strong> ({{ c.rating }}/5): {{ c.text }}
-      </li>
-    </ul>
+    <p *ngIf="p.team || p.league">{{ p.team }}<span *ngIf="p.team && p.league"> · </span>{{ p.league }}</p>
+    <p *ngIf="p.position">Posición: {{ p.position }}</p>
+    <p *ngIf="p.age">Edad: {{ p.age }}</p>
+    <p *ngIf="p.nationality">Nacionalidad: {{ p.nationality }}</p>
+    <p *ngIf="p.number">Dorsal: {{ p.number }}</p>
+
+    <!-- Comentarios -->
+    <h3 class="ion-margin-top">Comentarios</h3>
+
+    <ion-list *ngIf="p.comments?.length; else noComments">
+      <ion-item *ngFor="let c of p.comments">
+        <ion-label>
+          <h3>{{ c.author }} <small>({{ c.rating }}/5)</small></h3>
+          <p>{{ c.text }}</p>
+          <p *ngIf="c.createdAt"><small>{{ c.createdAt | date:'short' }}</small></p>
+        </ion-label>
+        <ion-button
+          *ngIf="isAuthenticated()"
+          slot="end"
+          fill="clear"
+          color="danger"
+          (click)="deleteComment(c._id)">
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-list>
+
+    <ng-template #noComments>
+      <p>No hay comentarios aún.</p>
+    </ng-template>
+
+    <!-- Formulario para añadir comentario (solo si auth) -->
+    <ng-container *ngIf="isAuthenticated()">
+      <h3 class="ion-margin-top">Añadir comentario</h3>
+      <form [formGroup]="commentForm" (ngSubmit)="submitComment()">
+        <ion-list>
+          <ion-item>
+            <ion-input
+              formControlName="author"
+              label="Autor"
+              labelPlacement="floating">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-textarea
+              formControlName="text"
+              label="Comentario"
+              labelPlacement="floating"
+              [maxlength]="1000"
+              [autoGrow]="true"
+              rows="3">
+            </ion-textarea>
+          </ion-item>
+          <ion-item>
+            <ion-label>Valoración: {{ commentForm.controls.rating.value }}/5</ion-label>
+            <ion-range
+              formControlName="rating"
+              min="0"
+              max="5"
+              step="1"
+              snaps="true"
+              pin="true">
+            </ion-range>
+          </ion-item>
+        </ion-list>
+
+        <ion-button
+          expand="block"
+          type="submit"
+          [disabled]="commentForm.invalid || isSubmittingComment()"
+          class="ion-margin-top">
+          <ion-spinner *ngIf="isSubmittingComment()" name="dots"></ion-spinner>
+          <span *ngIf="!isSubmittingComment()">Publicar comentario</span>
+        </ion-button>
+      </form>
+    </ng-container>
   </ng-container>
 </ion-content>

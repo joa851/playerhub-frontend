@@ -14,8 +14,7 @@ export const routes: Routes = [
       import('./features/auth/register/register.page').then((m) => m.RegisterPage),
   },
 
-  // Players: listado y detalle son públicos (spec: anónimos pueden listar y buscar).
-  // OJO: 'new' antes de ':id' para que Express… digo Angular Router lo case primero.
+  // Players
   {
     path: 'players',
     loadComponent: () =>
