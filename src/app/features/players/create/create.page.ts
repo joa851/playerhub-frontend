@@ -136,10 +136,11 @@ export class CreatePage {
 
     try {
       const created = await firstValueFrom(this.playerService.create(payload));
+      // botón back del detalle vuelve al listado después de crear.
       if (created?._id) {
-        this.router.navigate(['/players', created._id]);
+        this.router.navigate(['/players', created._id], { replaceUrl: true });
       } else {
-        this.router.navigate(['/players']);
+        this.router.navigate(['/players'], { replaceUrl: true });
       }
     } catch (err) {
       const msg = (err as { error?: { error?: string } })?.error?.error
