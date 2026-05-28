@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ player()?.name || 'Detalle' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-spinner *ngIf="isLoading()"></ion-spinner>
+
+  <ng-container *ngIf="player() as p">
+    <h2>{{ p.name }}</h2>
+    <p>{{ p.team }} · {{ p.league }}</p>
+    <p>Posición: {{ p.position }}</p>
+    <p>Edad: {{ p.age }}</p>
+    <img *ngIf="p.photo" [src]="p.photo" [alt]="p.name" style="max-width: 200px" />
+    <h3>Comentarios</h3>
+    <ul>
+      <li *ngFor="let c of p.comments">
+        <strong>{{ c.author }}</strong> ({{ c.rating }}/5): {{ c.text }}
+      </li>
+    </ul>
+  </ng-container>
+</ion-content>

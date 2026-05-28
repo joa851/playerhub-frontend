@@ -1,0 +1,20 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Players</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-spinner *ngIf="isLoading()"></ion-spinner>
+
+  <ion-list *ngIf="!isLoading()">
+    <ion-item *ngFor="let p of players()" [routerLink]="['/players', p._id]">
+      <ion-label>
+        <h2>{{ p.name }}</h2>
+        <p>{{ p.team }} · {{ p.position }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <p *ngIf="!isLoading() && players().length === 0">No hay jugadores aún.</p>
+</ion-content>
