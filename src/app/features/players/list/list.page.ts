@@ -1,9 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
+  IonButton,
+  IonButtons,
   IonContent,
   IonHeader,
+  IonIcon,
   IonItem,
   IonLabel,
   IonList,
@@ -11,7 +14,10 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { logOutOutline, logInOutline, personAddOutline, addOutline } from 'ionicons/icons';
 import { PlayerService } from '../../../core/services/player.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-players-list',
@@ -22,6 +28,9 @@ import { PlayerService } from '../../../core/services/player.service';
     IonHeader,
     IonToolbar,
     IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
     IonContent,
     IonList,
     IonItem,
@@ -31,11 +40,23 @@ import { PlayerService } from '../../../core/services/player.service';
 })
 export class ListPage implements OnInit {
   private readonly playerService = inject(PlayerService);
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
   readonly players = this.playerService.players;
   readonly isLoading = this.playerService.isLoading;
+  readonly isAuthenticated = this.auth.isAuthenticated;
+
+  constructor() {
+    addIcons({ logOutOutline, logInOutline, personAddOutline, addOutline });
+  }
 
   ngOnInit() {
     this.playerService.list().subscribe();
+  }
+
+  async logout() {
+    await this.auth.logout();
+    this.router.navigate(['/auth/login']);
   }
 }

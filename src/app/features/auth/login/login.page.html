@@ -5,5 +5,43 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <p>Placeholder</p>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <ion-list>
+      <ion-item>
+        <ion-input
+          formControlName="email"
+          type="email"
+          label="Email"
+          labelPlacement="floating"
+          autocomplete="email">
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input
+          formControlName="password"
+          type="password"
+          label="Contraseña"
+          labelPlacement="floating"
+          autocomplete="current-password">
+        </ion-input>
+      </ion-item>
+    </ion-list>
+
+    <ion-button
+      expand="block"
+      type="submit"
+      [disabled]="form.invalid || isLoading()"
+      class="ion-margin-top">
+      <ion-spinner *ngIf="isLoading()" name="dots"></ion-spinner>
+      <span *ngIf="!isLoading()">Iniciar sesión</span>
+    </ion-button>
+
+    <p *ngIf="errorMessage()" style="color: var(--ion-color-danger)" class="ion-margin-top">
+      {{ errorMessage() }}
+    </p>
+
+    <p class="ion-margin-top">
+      ¿No tienes cuenta? <a [routerLink]="['/auth/register']">Regístrate</a>
+    </p>
+  </form>
 </ion-content>
