@@ -20,6 +20,14 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-searchbar
+      placeholder="Buscar por nombre"
+      [debounce]="400"
+      (ionInput)="onSearch($event)">
+    </ion-searchbar>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
@@ -34,5 +42,5 @@
     </ion-item>
   </ion-list>
 
-  <p *ngIf="!isLoading() && players().length === 0">No hay jugadores aún.</p>
+  <p *ngIf="!isLoading() && players().length === 0">No hay jugadores.</p>
 </ion-content>

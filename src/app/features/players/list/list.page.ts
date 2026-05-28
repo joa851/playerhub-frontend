@@ -10,6 +10,7 @@ import {
   IonItem,
   IonLabel,
   IonList,
+  IonSearchbar,
   IonSpinner,
   IonTitle,
   IonToolbar,
@@ -32,6 +33,7 @@ import { AuthService } from '../../../core/services/auth.service';
     IonButton,
     IonIcon,
     IonContent,
+    IonSearchbar,
     IonList,
     IonItem,
     IonLabel,
@@ -55,8 +57,17 @@ export class ListPage implements OnInit {
     this.playerService.list().subscribe();
   }
 
+  // Llamado por ion-searchbar con debounce de 400 ms (config en el HTML).
+  // Si el input está vacío re-cargamos sin filtro.
+  onSearch(event: Event) {
+    const target = event.target as HTMLIonSearchbarElement;
+    const value = (target.value || '').trim();
+    this.playerService.list(value ? { name: value } : {}).subscribe();
+  }
+
   async logout() {
     await this.auth.logout();
-    this.router.navigate(['/auth/login']);
+    // Un usuario puede querer hacer logout y seguir consultando la información como invitado
+    // this.router.navigate(['/auth/login']);
   }
 }
