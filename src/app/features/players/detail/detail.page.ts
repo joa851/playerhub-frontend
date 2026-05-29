@@ -20,7 +20,8 @@ import {
   IonToolbar,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { trashOutline } from 'ionicons/icons';
+import { locationOutline, trashOutline } from 'ionicons/icons';
+import { Geolocation } from '@capacitor/geolocation';
 import { firstValueFrom } from 'rxjs';
 import { PlayerService } from '../../../core/services/player.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -64,10 +65,34 @@ export class DetailPage implements OnInit {
     author: ['', [Validators.required, Validators.maxLength(200)]],
     text:   ['', [Validators.required, Validators.maxLength(1000)]],
     rating: [3, [Validators.required, Validators.min(0), Validators.max(5)]],
+    location: this.fb.nonNullable.group({
+      latitude:  [null as number | null],
+      longitude: [null as number | null],
+    }),
   });
 
+  readonly locationError = signal<string | null>(null);
+
   constructor() {
-    addIcons({ trashOutline });
+    addIcons({ locationOutline, trashOutline });
+  }
+
+  /** Rellena lat/lon del comentario con la geolocalización del dispositivo. */
+  async useMyLocation() {
+    this.locationError.set(null);
+    try {
+      const pos = await Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 8000,
+      });
+      this.commentForm.controls.location.patchValue({
+        latitude:  pos.coords.latitude,
+        longitude: pos.coords.longitude,
+      });
+    } catch (err) {
+      const msg = (err as Error)?.message ?? 'No se pudo obtener la ubicación';
+      this.locationError.set(msg);
+    }
   }
 
   ngOnInit() {
@@ -91,10 +116,25 @@ export class DetailPage implements OnInit {
     if (this.commentForm.invalid || !p?._id) return;
     this.isSubmittingComment.set(true);
     try {
-      await firstValueFrom(
-        this.playerService.addComment(p._id, this.commentForm.getRawValue()),
-      );
-      this.commentForm.reset({ author: '', text: '', rating: 3 });
+      const raw = this.commentForm.getRawValue();
+      // Construimos el payload sin location si no se ha capturado.
+      const payload: Record<string, unknown> = {
+        author: raw.author,
+        text:   raw.text,
+        rating: raw.rating,
+      };
+      if (raw.location.latitude != null && raw.location.longitude != null) {
+        payload['location'] = raw.location;
+      }
+
+      await firstValueFrom(this.playerService.addComment(p._id, payload as never));
+      this.commentForm.reset({
+        author: '',
+        text:   '',
+        rating: 3,
+        location: { latitude: null, longitude: null },
+      });
+      this.locationError.set(null);
       await this.refreshPlayer();
     } finally {
       this.isSubmittingComment.set(false);

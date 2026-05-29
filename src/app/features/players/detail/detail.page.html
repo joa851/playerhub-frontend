@@ -33,6 +33,9 @@
         <ion-label>
           <h3>{{ c.author }} <small>({{ c.rating }}/5)</small></h3>
           <p>{{ c.text }}</p>
+          <p *ngIf="c.location?.latitude != null">
+            <small>📍 {{ c.location?.latitude | number:'1.2-4' }}, {{ c.location?.longitude | number:'1.2-4' }}</small>
+          </p>
           <p *ngIf="c.createdAt"><small>{{ c.createdAt | date:'short' }}</small></p>
         </ion-label>
         <ion-button
@@ -84,6 +87,38 @@
             </ion-range>
           </ion-item>
         </ion-list>
+
+        <!-- Geolocalización del comentario -->
+        <ion-list formGroupName="location">
+          <ion-item>
+            <ion-input
+              formControlName="latitude"
+              type="number"
+              label="Latitud"
+              labelPlacement="floating">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-input
+              formControlName="longitude"
+              type="number"
+              label="Longitud"
+              labelPlacement="floating">
+            </ion-input>
+          </ion-item>
+        </ion-list>
+
+        <ion-button fill="outline" (click)="useMyLocation()" class="ion-margin-top">
+          <ion-icon slot="start" name="location-outline"></ion-icon>
+          Usar mi ubicación
+        </ion-button>
+
+        <p
+          *ngIf="locationError()"
+          style="color: var(--ion-color-danger)"
+          class="ion-margin-top">
+          {{ locationError() }}
+        </p>
 
         <ion-button
           expand="block"
