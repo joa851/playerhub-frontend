@@ -34,14 +34,42 @@
 <ion-content class="ion-padding">
   <ion-spinner *ngIf="isLoading()"></ion-spinner>
 
-  <ion-list *ngIf="!isLoading()">
-    <ion-item *ngFor="let p of players()" [routerLink]="['/players', p._id]">
+  <ion-list *ngIf="!isLoading()" lines="none">
+    <ion-item
+      *ngFor="let p of players()"
+      class="player-card"
+      button
+      detail="false"
+      [routerLink]="['/players', p._id]">
+
+      <!-- Avatar: foto o iniciales -->
+      <div
+        slot="start"
+        class="player-avatar"
+        [style.backgroundImage]="p.photo ? 'url(' + p.photo + ')' : ''">
+        <span *ngIf="!p.photo">{{ (p.name || '?').charAt(0) }}</span>
+      </div>
+
       <ion-label>
-        <h2>{{ p.name }}</h2>
-        <p>{{ p.team }} · {{ p.position }}</p>
+        <h2 style="font-size: 17px; font-weight: 600; margin: 0">{{ p.name }}</h2>
+        <p *ngIf="p.team || p.league" style="color: #6b7280; margin: 2px 0 0">
+          {{ p.team }}<span *ngIf="p.team && p.league"> · </span>{{ p.league }}
+        </p>
       </ion-label>
+
+      <span
+        *ngIf="p.position"
+        slot="end"
+        class="position-badge"
+        [ngClass]="'position-badge--' + p.position">
+        {{ p.position }}
+      </span>
     </ion-item>
   </ion-list>
 
-  <p *ngIf="!isLoading() && players().length === 0">No hay jugadores.</p>
+  <p
+    *ngIf="!isLoading() && players().length === 0"
+    style="text-align: center; color: #6b7280; margin-top: 64px">
+    No hay jugadores.
+  </p>
 </ion-content>

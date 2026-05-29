@@ -11,32 +11,64 @@
   <ion-spinner *ngIf="isLoading()"></ion-spinner>
 
   <ng-container *ngIf="!isLoading() && player() as p">
-    <!-- Datos básicos -->
-    <img
-      *ngIf="p.photo"
-      [src]="p.photo"
-      [alt]="p.name"
-      style="max-width: 200px; border-radius: 8px; display: block; margin-bottom: 16px" />
 
-    <h2>{{ p.name }}</h2>
-    <p *ngIf="p.team || p.league">{{ p.team }}<span *ngIf="p.team && p.league"> · </span>{{ p.league }}</p>
-    <p *ngIf="p.position">Posición: {{ p.position }}</p>
-    <p *ngIf="p.age">Edad: {{ p.age }}</p>
-    <p *ngIf="p.nationality">Nacionalidad: {{ p.nationality }}</p>
-    <p *ngIf="p.number">Dorsal: {{ p.number }}</p>
+    <!-- HERO: foto a pantalla completa con gradiente y nombre overlay -->
+    <div
+      class="player-hero"
+      [style.backgroundImage]="p.photo ? 'url(' + p.photo + ')' : ''">
+      <div class="player-hero-title">
+        <h2>{{ p.name }}</h2>
+        <p>
+          {{ p.team }}<span *ngIf="p.team && p.league"> · </span>{{ p.league }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Info chips -->
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px">
+      <span
+        *ngIf="p.position"
+        class="position-badge"
+        [ngClass]="'position-badge--' + p.position">
+        {{ p.position }}
+      </span>
+      <span
+        *ngIf="p.number != null"
+        class="position-badge"
+        style="background: #1f2937">
+        #{{ p.number }}
+      </span>
+      <span
+        *ngIf="p.age != null"
+        class="position-badge"
+        style="background: #6b7280">
+        {{ p.age }} años
+      </span>
+      <span
+        *ngIf="p.nationality"
+        class="position-badge"
+        style="background: #6b7280">
+        {{ p.nationality }}
+      </span>
+    </div>
 
     <!-- Comentarios -->
-    <h3 class="ion-margin-top">Comentarios</h3>
+    <h3>Comentarios ({{ p.comments?.length || 0 }})</h3>
 
-    <ion-list *ngIf="p.comments?.length; else noComments">
-      <ion-item *ngFor="let c of p.comments">
+    <ion-list *ngIf="p.comments?.length; else noComments" lines="none">
+      <ion-item *ngFor="let c of p.comments" class="comment-card">
         <ion-label>
-          <h3>{{ c.author }} <small>({{ c.rating }}/5)</small></h3>
-          <p>{{ c.text }}</p>
-          <p *ngIf="c.location?.latitude != null">
+          <h3 style="font-size: 15px; margin: 0">
+            {{ c.author }}
+            <span class="comment-rating">· {{ c.rating }}/5 ★</span>
+          </h3>
+          <p style="color: #374151; margin: 4px 0; white-space: pre-wrap">{{ c.text }}</p>
+          <p *ngIf="c.location?.latitude != null" style="color: #6b7280; margin: 2px 0">
             <small>📍 {{ c.location?.latitude | number:'1.2-4' }}, {{ c.location?.longitude | number:'1.2-4' }}</small>
           </p>
-          <p *ngIf="c.createdAt"><small>{{ c.createdAt | date:'short' }}</small></p>
+          <p *ngIf="c.createdAt" style="color: #9ca3af; margin: 2px 0">
+            <small>{{ c.createdAt | date:'short' }}</small>
+          </p>
         </ion-label>
         <ion-button
           *ngIf="isAuthenticated()"
@@ -50,85 +82,90 @@
     </ion-list>
 
     <ng-template #noComments>
-      <p>No hay comentarios aún.</p>
+      <p style="text-align: center; color: #6b7280; margin: 16px 0">
+        Sé el primero en comentar.
+      </p>
     </ng-template>
 
-    <!-- Formulario para añadir comentario (solo si auth) -->
+    <!-- Formulario para añadir comentario -->
     <ng-container *ngIf="isAuthenticated()">
-      <h3 class="ion-margin-top">Añadir comentario</h3>
-      <form [formGroup]="commentForm" (ngSubmit)="submitComment()">
-        <ion-list>
-          <ion-item>
-            <ion-input
-              formControlName="author"
-              label="Autor"
-              labelPlacement="floating">
-            </ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-textarea
-              formControlName="text"
-              label="Comentario"
-              labelPlacement="floating"
-              [maxlength]="1000"
-              [autoGrow]="true"
-              rows="3">
-            </ion-textarea>
-          </ion-item>
-          <ion-item>
-            <ion-label>Valoración: {{ commentForm.controls.rating.value }}/5</ion-label>
-            <ion-range
-              formControlName="rating"
-              min="0"
-              max="5"
-              step="1"
-              snaps="true"
-              pin="true">
-            </ion-range>
-          </ion-item>
-        </ion-list>
+      <h3>Añadir comentario</h3>
 
-        <!-- Geolocalización del comentario -->
-        <ion-list formGroupName="location">
-          <ion-item>
-            <ion-input
-              formControlName="latitude"
-              type="number"
-              label="Latitud"
-              labelPlacement="floating">
-            </ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-input
-              formControlName="longitude"
-              type="number"
-              label="Longitud"
-              labelPlacement="floating">
-            </ion-input>
-          </ion-item>
-        </ion-list>
+      <div class="auth-card" style="max-width: none">
+        <form [formGroup]="commentForm" (ngSubmit)="submitComment()">
+          <ion-list lines="full">
+            <ion-item>
+              <ion-input
+                formControlName="author"
+                label="Autor"
+                labelPlacement="floating">
+              </ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-textarea
+                formControlName="text"
+                label="Comentario"
+                labelPlacement="floating"
+                [maxlength]="1000"
+                [autoGrow]="true"
+                rows="3">
+              </ion-textarea>
+            </ion-item>
+            <ion-item>
+              <ion-label>Valoración: <strong>{{ commentForm.controls.rating.value }}/5</strong></ion-label>
+              <ion-range
+                formControlName="rating"
+                min="0"
+                max="5"
+                step="1"
+                snaps="true"
+                pin="true">
+              </ion-range>
+            </ion-item>
+          </ion-list>
 
-        <ion-button fill="outline" (click)="useMyLocation()" class="ion-margin-top">
-          <ion-icon slot="start" name="location-outline"></ion-icon>
-          Usar mi ubicación
-        </ion-button>
+          <!-- Geolocalización -->
+          <ion-list lines="full" formGroupName="location">
+            <ion-item>
+              <ion-input
+                formControlName="latitude"
+                type="number"
+                label="Latitud"
+                labelPlacement="floating">
+              </ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input
+                formControlName="longitude"
+                type="number"
+                label="Longitud"
+                labelPlacement="floating">
+              </ion-input>
+            </ion-item>
+          </ion-list>
 
-        <p
-          *ngIf="locationError()"
-          style="color: var(--ion-color-danger)"
-          class="ion-margin-top">
-          {{ locationError() }}
-        </p>
+          <ion-button fill="outline" (click)="useMyLocation()" class="ion-margin-top">
+            <ion-icon slot="start" name="location-outline"></ion-icon>
+            Usar mi ubicación
+          </ion-button>
 
-        <ion-button
-          expand="block"
-          type="submit"
-          [disabled]="commentForm.invalid || isSubmittingComment()"
-          class="ion-margin-top">
-          <ion-spinner *ngIf="isSubmittingComment()" name="dots"></ion-spinner>
-          <span *ngIf="!isSubmittingComment()">Publicar comentario</span>
-        </ion-button>
-      </form>
+          <p
+            *ngIf="locationError()"
+            style="color: var(--ion-color-danger)"
+            class="ion-margin-top">
+            {{ locationError() }}
+          </p>
+
+          <ion-button
+            expand="block"
+            type="submit"
+            [disabled]="commentForm.invalid || isSubmittingComment()"
+            class="ion-margin-top">
+            <ion-spinner *ngIf="isSubmittingComment()" name="dots"></ion-spinner>
+            <span *ngIf="!isSubmittingComment()">Publicar comentario</span>
+          </ion-button>
+        </form>
+      </div>
     </ng-container>
   </ng-container>
 </ion-content>

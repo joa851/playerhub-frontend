@@ -14,4 +14,15 @@ bootstrapApplication(AppComponent, {
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideHttpClient(withInterceptors([authInterceptor])),
   ],
+}).then(() => {
+  // Splash inicial (definido en index.html): fade-out tras 300 ms,
+  // remove tras la transición. Suficiente para que la primera vez se
+  // vea aunque la app cargue muy rápido.
+  const splash = document.getElementById('initial-splash');
+  if (splash) {
+    setTimeout(() => {
+      splash.style.opacity = '0';
+      setTimeout(() => splash.remove(), 400);
+    }, 300);
+  }
 });

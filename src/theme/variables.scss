@@ -1,2 +1,92 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
+// PlayerHub theme: minimalista claro, paleta verde refinada.
+// Override de las variables CSS de Ionic. Doc: https://ionicframework.com/docs/theming/
+
+:root {
+  // Color primario: emerald-700, refinado y "deportivo" sin saturar
+  --ion-color-primary:           #047857;
+  --ion-color-primary-rgb:       4, 120, 87;
+  --ion-color-primary-contrast:  #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade:     #03694c;
+  --ion-color-primary-tint:      #1d8568;
+
+  // Secundario: slate más oscuro para badges neutros
+  --ion-color-secondary:         #374151;
+  --ion-color-secondary-rgb:     55, 65, 81;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade:   #303942;
+  --ion-color-secondary-tint:    #4b5460;
+
+  // Tertiary: ámbar para destacar (rating, alertas suaves)
+  --ion-color-tertiary:          #f59e0b;
+  --ion-color-tertiary-rgb:      245, 158, 11;
+  --ion-color-tertiary-contrast: #000000;
+  --ion-color-tertiary-contrast-rgb: 0, 0, 0;
+  --ion-color-tertiary-shade:    #d88b09;
+  --ion-color-tertiary-tint:     #f6a823;
+
+  // Success / Warning / Danger
+  --ion-color-success:           #059669;
+  --ion-color-success-rgb:       5, 150, 105;
+  --ion-color-success-contrast:  #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade:     #04845c;
+  --ion-color-success-tint:      #1ea177;
+
+  --ion-color-warning:           #f59e0b;
+  --ion-color-warning-rgb:       245, 158, 11;
+  --ion-color-warning-contrast:  #000000;
+  --ion-color-warning-contrast-rgb: 0, 0, 0;
+  --ion-color-warning-shade:     #d88b09;
+  --ion-color-warning-tint:      #f6a823;
+
+  --ion-color-danger:            #dc2626;
+  --ion-color-danger-rgb:        220, 38, 38;
+  --ion-color-danger-contrast:   #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade:      #c22222;
+  --ion-color-danger-tint:       #e03c3c;
+
+  // Grises del sistema
+  --ion-color-medium:            #6b7280;
+  --ion-color-medium-rgb:        107, 114, 128;
+  --ion-color-medium-contrast:   #ffffff;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade:      #5e6470;
+  --ion-color-medium-tint:       #7a808d;
+
+  --ion-color-light:             #f9fafb;
+  --ion-color-light-rgb:         249, 250, 251;
+  --ion-color-light-contrast:    #000000;
+  --ion-color-light-contrast-rgb: 0, 0, 0;
+  --ion-color-light-shade:       #dbdcdd;
+  --ion-color-light-tint:        #fafbfb;
+
+  // Background y texto base
+  --ion-background-color:        #f7f8fa;   // muy ligeramente gris (no blanco puro)
+  --ion-background-color-rgb:    247, 248, 250;
+  --ion-text-color:              #0f172a;
+  --ion-text-color-rgb:          15, 23, 42;
+
+  // Toolbar limpio
+  --ion-toolbar-background:      #ffffff;
+  --ion-toolbar-color:           #0f172a;
+  --ion-toolbar-border-color:    #e5e7eb;
+
+  // Items (cards blancas sobre el fondo gris)
+  --ion-item-background:         #ffffff;
+  --ion-item-border-color:       #e5e7eb;
+
+  // Tipografía: Inter desde Google Fonts (cargada en index.html)
+  --ion-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+                     Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+// Colores custom para los badges de posición (no son colores Ionic estándar)
+:root {
+  --pos-goalkeeper:  #f59e0b;
+  --pos-defender:    #3b82f6;
+  --pos-midfielder:  #059669;
+  --pos-attacker:    #ef4444;
+}

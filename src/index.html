@@ -1,26 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
   <meta charset="utf-8" />
-  <title>Ionic App</title>
+  <title>PlayerHub</title>
 
   <base href="/" />
 
-  <meta name="color-scheme" content="light dark" />
+  <meta name="color-scheme" content="light" />
   <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="format-detection" content="telephone=no" />
   <meta name="msapplication-tap-highlight" content="no" />
+  <meta name="theme-color" content="#047857" />
 
-  <link rel="icon" type="image/png" href="assets/icon/favicon.png" />
+  <link rel="icon" type="image/png" href="assets/icon.png" />
+
+  <!-- Inter font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <!-- add to homescreen for ios -->
   <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="PlayerHub" />
+
+  <style>
+    /* Splash inicial (HTML/CSS plano). Se muestra hasta que Angular monta
+       <app-root>; cuando Angular reemplaza el contenido, desaparece. */
+    #initial-splash {
+      position: fixed;
+      inset: 0;
+      background: #f7f8fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity .4s ease;
+    }
+    #initial-splash img {
+      width: 220px;
+      height: 220px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50%      { transform: scale(1.05); }
+    }
+    app-root:not(:empty) ~ #initial-splash {
+      opacity: 0;
+      pointer-events: none;
+    }
+  </style>
 </head>
 
 <body>
   <app-root></app-root>
+
+  <div id="initial-splash">
+    <img src="assets/icon.png" alt="PlayerHub" />
+  </div>
 </body>
 
 </html>

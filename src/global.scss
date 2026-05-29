@@ -34,4 +34,183 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+/* dark.system desactivado: la app es light-only por decisión de diseño. */
+/* @import '@ionic/angular/css/palettes/dark.system.css'; */
+
+/* ─── PlayerHub global styles ─────────────────────────────────────────── */
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-feature-settings: 'cv11', 'ss01';   // alternativas tipográficas Inter
+}
+
+// Toolbar plano con borde sutil
+ion-header ion-toolbar {
+  --border-width: 0 0 1px 0;
+  --border-style: solid;
+  --border-color: var(--ion-color-light-shade);
+}
+
+ion-content {
+  --background: var(--ion-background-color);
+}
+
+// Botones redondeados con sombra suave
+ion-button {
+  --border-radius: 10px;
+  --box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+ion-button[fill="outline"] {
+  --box-shadow: none;
+}
+
+// Listas: por defecto transparentes (queremos cards individuales)
+ion-list {
+  background: transparent;
+  padding: 0;
+}
+
+// Search bar tipo "pill"
+ion-searchbar {
+  --background: #ffffff;
+  --border-radius: 14px;
+  --box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  padding: 12px 16px 8px;
+}
+
+// Heading consistente
+h1, h2, h3 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ion-text-color);
+}
+
+h2 { font-size: 24px; margin: 8px 0; }
+h3 { font-size: 18px; margin: 24px 0 12px; }
+
+// ─── Componentes reutilizables ────────────────────────────────────────
+
+// Brand logo en auth
+.brand-logo {
+  display: block;
+  width: 220px;
+  height: auto;
+  margin: 32px auto 24px;
+}
+
+// Auth card: form blanco centrado con sombra suave
+.auth-card {
+  max-width: 420px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 28px 24px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06),
+              0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+// Player card (lista de jugadores)
+.player-card {
+  --background: #ffffff;
+  --border-radius: 14px;
+  --inner-padding-end: 16px;
+  --padding-start: 16px;
+  --min-height: 76px;
+  margin-bottom: 10px;
+  border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+  overflow: hidden;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.player-card:active {
+  transform: scale(.99);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+
+// Avatar redondo dentro de las cards
+.player-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+// Badges de posición
+.position-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--ion-color-medium);
+}
+.position-badge--Goalkeeper { background: var(--pos-goalkeeper); color: #111827; }
+.position-badge--Defender   { background: var(--pos-defender); }
+.position-badge--Midfielder { background: var(--pos-midfielder); }
+.position-badge--Attacker   { background: var(--pos-attacker); }
+
+// Hero foto en detalle
+.player-hero {
+  margin: -16px -16px 16px;   // sale del padding del ion-content
+  height: 280px;
+  background-color: #e5e7eb;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+.player-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.55) 100%);
+}
+.player-hero-title {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 16px;
+  color: #fff;
+  z-index: 1;
+}
+.player-hero-title h2 {
+  color: #fff;
+  font-size: 32px;
+  margin: 0 0 4px;
+}
+.player-hero-title p {
+  color: #fff;
+  opacity: .85;
+  margin: 0;
+  font-size: 15px;
+}
+
+// Comment card
+.comment-card {
+  --background: #ffffff;
+  --border-radius: 12px;
+  --inner-padding-end: 12px;
+  --padding-start: 16px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+.comment-rating {
+  color: var(--ion-color-tertiary);
+  font-weight: 600;
+}
+
