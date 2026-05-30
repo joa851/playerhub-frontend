@@ -254,19 +254,26 @@
       style="text-align: center; color: #6b7280; margin-top: 32px">
       Escribe un nombre para buscar en API-Football.
     </p>
+  </ng-container>
+</ion-content>
 
-    <!-- Botón importar fijo abajo, visible cuando hay seleccionados -->
+<!-- Footer fijo: botón importar siempre visible en la tab API-Football -->
+<ion-footer *ngIf="activeTab() === 'external'" class="ion-no-border">
+  <ion-toolbar>
     <ion-button
-      *ngIf="selectedIds().size > 0"
       expand="block"
-      [disabled]="importing()"
+      color="primary"
+      [disabled]="selectedIds().size === 0 || importing()"
       (click)="importSelected()"
-      class="ion-margin-top">
+      class="ion-margin">
       <ion-icon slot="start" name="cloud-download-outline"></ion-icon>
       <ion-spinner *ngIf="importing()" name="dots"></ion-spinner>
-      <span *ngIf="!importing()">
+      <span *ngIf="!importing() && selectedIds().size === 0">
+        Selecciona jugadores para importar
+      </span>
+      <span *ngIf="!importing() && selectedIds().size > 0">
         Importar {{ selectedIds().size }} jugador{{ selectedIds().size > 1 ? 'es' : '' }}
       </span>
     </ion-button>
-  </ng-container>
-</ion-content>
+  </ion-toolbar>
+</ion-footer>
