@@ -1,6 +1,9 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://playerhub-backend-mean-jbpcjhx2eq-uc.a.run.app',
+  apiUrls: {
+    mean:   'https://playerhub-backend-mean-jbpcjhx2eq-uc.a.run.app',
+    spring: 'https://playerhub-player-jbpcjhx2eq-uc.a.run.app',
+  },
   firebase: {
     apiKey: 'AIzaSyAoYUDCjsv7vX87ZpcQXevXidNEcuJ3uG8',
     authDomain: 'playerhub-d019c.firebaseapp.com',

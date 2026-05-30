@@ -7,6 +7,10 @@
   </ion-toolbar>
 
   <ion-toolbar>
+    <app-backend-toggle></app-backend-toggle>
+  </ion-toolbar>
+
+  <ion-toolbar>
     <ion-segment [value]="activeTab()" (ionChange)="onTabChange($event)">
       <ion-segment-button value="form">
         <ion-label>Formulario</ion-label>

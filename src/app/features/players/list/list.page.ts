@@ -19,6 +19,7 @@ import { addIcons } from 'ionicons';
 import { logOutOutline, logInOutline, personAddOutline, addOutline } from 'ionicons/icons';
 import { PlayerService } from '../../../core/services/player.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { BackendToggleComponent } from '../../../shared/components/backend-toggle.component';
 
 @Component({
   selector: 'app-players-list',
@@ -38,6 +39,7 @@ import { AuthService } from '../../../core/services/auth.service';
     IonItem,
     IonLabel,
     IonSpinner,
+    BackendToggleComponent,
   ],
 })
 export class ListPage implements OnInit {

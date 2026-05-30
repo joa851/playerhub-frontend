@@ -29,6 +29,7 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Geolocation } from '@capacitor/geolocation';
 import { firstValueFrom } from 'rxjs';
 import { PlayerService } from '../../../core/services/player.service';
+import { BackendToggleComponent } from '../../../shared/components/backend-toggle.component';
 
 /** Shape de cada item devuelto por GET /players/external. */
 interface ExternalPlayer {
@@ -67,6 +68,7 @@ interface ExternalPlayer {
     IonSegmentButton,
     IonSearchbar,
     IonCheckbox,
+    BackendToggleComponent,
   ],
 })
 export class CreatePage {

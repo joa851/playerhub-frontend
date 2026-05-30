@@ -22,6 +22,10 @@
   </ion-toolbar>
 
   <ion-toolbar>
+    <app-backend-toggle></app-backend-toggle>
+  </ion-toolbar>
+
+  <ion-toolbar>
     <ion-searchbar
       placeholder="Buscar por nombre"
       [debounce]="400"
@@ -29,6 +33,7 @@
       (ionInput)="onSearch($event)">
     </ion-searchbar>
   </ion-toolbar>
+
 </ion-header>
 
 <ion-content class="ion-padding">

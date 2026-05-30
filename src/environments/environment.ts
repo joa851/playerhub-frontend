@@ -3,9 +3,10 @@
 
 export const environment = {
   production: false,
-  // Backend activo en dev. En sub-bloque FE-F (toggle Java/Node) se
-  // reemplazará por un objeto { mean: '...', spring: '...' }.
-  apiUrl: 'https://playerhub-backend-mean-jbpcjhx2eq-uc.a.run.app',
+  apiUrls: {
+    mean:   'https://playerhub-backend-mean-jbpcjhx2eq-uc.a.run.app',
+    spring: 'https://playerhub-player-jbpcjhx2eq-uc.a.run.app',
+  },
   firebase: {
     apiKey: 'AIzaSyAoYUDCjsv7vX87ZpcQXevXidNEcuJ3uG8',
     authDomain: 'playerhub-d019c.firebaseapp.com',

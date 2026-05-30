@@ -26,6 +26,7 @@ import { firstValueFrom } from 'rxjs';
 import { PlayerService } from '../../../core/services/player.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Player } from '../../../core/models/player.model';
+import { BackendToggleComponent } from '../../../shared/components/backend-toggle.component';
 
 @Component({
   selector: 'app-player-detail',
@@ -48,6 +49,7 @@ import { Player } from '../../../core/models/player.model';
     IonInput,
     IonTextarea,
     IonRange,
+    BackendToggleComponent,
   ],
 })
 export class DetailPage implements OnInit {
