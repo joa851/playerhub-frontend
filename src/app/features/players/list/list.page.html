@@ -69,6 +69,15 @@
         [ngClass]="'position-badge--' + p.position">
         {{ p.position }}
       </span>
+
+      <ion-button
+        *ngIf="isAdmin()"
+        slot="end"
+        fill="clear"
+        color="danger"
+        (click)="deletePlayer(p, $event)">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
     </ion-item>
   </ion-list>
 
