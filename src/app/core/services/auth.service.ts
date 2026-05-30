@@ -20,6 +20,19 @@ export class AuthService {
   readonly currentUser = signal<User | null>(null);
   readonly isAuthenticated = computed(() => this.currentUser() !== null);
 
+  /**
+   * Es admin si su email está en la whitelist `environment.adminEmails`.
+   * El backend valida lo mismo con ADMIN_EMAILS; este signal solo sirve
+   * para ocultar botones de la UI (defensa visual, no de seguridad).
+   */
+  readonly isAdmin = computed(() => {
+    const email = this.currentUser()?.email?.toLowerCase();
+    if (!email) return false;
+    return environment.adminEmails
+      .map((e) => e.toLowerCase())
+      .includes(email);
+  });
+
   constructor() {
     this.app = initializeApp(environment.firebase);
     this.auth = getAuth(this.app);

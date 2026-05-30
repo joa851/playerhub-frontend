@@ -4,6 +4,9 @@ export const environment = {
     mean:   'https://playerhub-backend-mean-jbpcjhx2eq-uc.a.run.app',
     spring: 'https://playerhub-player-jbpcjhx2eq-uc.a.run.app',
   },
+  // Emails con permisos de admin. DEBE coincidir con ADMIN_EMAILS del backend.
+  // Es solo para ocultar UI en el FE; el backend es la fuente de verdad.
+  adminEmails: ['admin@gmail.com'],
   firebase: {
     apiKey: 'AIzaSyAoYUDCjsv7vX87ZpcQXevXidNEcuJ3uG8',
     authDomain: 'playerhub-d019c.firebaseapp.com',

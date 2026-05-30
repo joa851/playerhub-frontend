@@ -62,6 +62,7 @@ export class DetailPage implements OnInit {
   readonly isLoading = signal(false);
   readonly isSubmittingComment = signal(false);
   readonly isAuthenticated = this.auth.isAuthenticated;
+  readonly isAdmin = this.auth.isAdmin;
 
   readonly commentForm = this.fb.nonNullable.group({
     author: ['', [Validators.required, Validators.maxLength(200)]],
