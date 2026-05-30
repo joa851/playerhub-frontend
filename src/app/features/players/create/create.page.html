@@ -5,10 +5,23 @@
     </ion-buttons>
     <ion-title>Nuevo jugador</ion-title>
   </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-segment [value]="activeTab()" (ionChange)="onTabChange($event)">
+      <ion-segment-button value="form">
+        <ion-label>Formulario</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="external">
+        <ion-label>API-Football</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <form [formGroup]="form" (ngSubmit)="submit()">
+
+  <!-- ─── TAB 1: Formulario manual ──────────────────────────────────── -->
+  <form *ngIf="activeTab() === 'form'" [formGroup]="form" (ngSubmit)="submit()">
 
     <!-- Foto: URL o cámara -->
     <ion-list>
@@ -174,4 +187,82 @@
       {{ errorMessage() }}
     </p>
   </form>
+
+  <!-- ─── TAB 2: API-Football ──────────────────────────────────────── -->
+  <ng-container *ngIf="activeTab() === 'external'">
+
+    <ion-searchbar
+      placeholder="Buscar jugadores por nombre"
+      [debounce]="500"
+      (ionInput)="onExternalSearch($event)">
+    </ion-searchbar>
+
+    <ion-spinner *ngIf="externalSearching()"></ion-spinner>
+
+    <p
+      *ngIf="externalError()"
+      style="color: var(--ion-color-danger)"
+      class="ion-margin-top">
+      {{ externalError() }}
+    </p>
+
+    <ion-list *ngIf="!externalSearching() && externalResults().length > 0" lines="none">
+      <ion-item
+        *ngFor="let r of externalResults()"
+        class="player-card"
+        button
+        (click)="toggleSelected(r.id)">
+
+        <ion-checkbox
+          slot="start"
+          [checked]="isSelected(r.id)"
+          (ionChange)="toggleSelected(r.id)"
+          (click)="$event.stopPropagation()">
+        </ion-checkbox>
+
+        <div
+          slot="start"
+          class="player-avatar"
+          [style.backgroundImage]="r.photo ? 'url(' + r.photo + ')' : ''">
+          <span *ngIf="!r.photo">{{ (r.name || '?').charAt(0) }}</span>
+        </div>
+
+        <ion-label>
+          <h2 style="font-size: 16px; font-weight: 600; margin: 0">{{ r.name }}</h2>
+          <p style="color: #6b7280; margin: 2px 0 0">
+            <ng-container *ngIf="r.position">{{ r.position }}</ng-container>
+            <ng-container *ngIf="r.position && r.nationality"> · </ng-container>
+            <ng-container *ngIf="r.nationality">{{ r.nationality }}</ng-container>
+            <ng-container *ngIf="r.age"> · {{ r.age }} años</ng-container>
+          </p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <p
+      *ngIf="!externalSearching() && externalQuery() && externalResults().length === 0"
+      style="text-align: center; color: #6b7280; margin-top: 32px">
+      No se encontraron jugadores.
+    </p>
+
+    <p
+      *ngIf="!externalQuery()"
+      style="text-align: center; color: #6b7280; margin-top: 32px">
+      Escribe un nombre para buscar en API-Football.
+    </p>
+
+    <!-- Botón importar fijo abajo, visible cuando hay seleccionados -->
+    <ion-button
+      *ngIf="selectedIds().size > 0"
+      expand="block"
+      [disabled]="importing()"
+      (click)="importSelected()"
+      class="ion-margin-top">
+      <ion-icon slot="start" name="cloud-download-outline"></ion-icon>
+      <ion-spinner *ngIf="importing()" name="dots"></ion-spinner>
+      <span *ngIf="!importing()">
+        Importar {{ selectedIds().size }} jugador{{ selectedIds().size > 1 ? 'es' : '' }}
+      </span>
+    </ion-button>
+  </ng-container>
 </ion-content>

@@ -6,12 +6,17 @@ import {
   IonBackButton,
   IonButton,
   IonButtons,
+  IonCheckbox,
   IonContent,
   IonHeader,
   IonIcon,
   IonInput,
   IonItem,
+  IonLabel,
   IonList,
+  IonSearchbar,
+  IonSegment,
+  IonSegmentButton,
   IonSelect,
   IonSelectOption,
   IonSpinner,
@@ -19,11 +24,23 @@ import {
   IonToolbar,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { cameraOutline, locationOutline, trashOutline } from 'ionicons/icons';
+import { cameraOutline, cloudDownloadOutline, locationOutline, trashOutline } from 'ionicons/icons';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Geolocation } from '@capacitor/geolocation';
 import { firstValueFrom } from 'rxjs';
 import { PlayerService } from '../../../core/services/player.service';
+
+/** Shape de cada item devuelto por GET /players/external. */
+interface ExternalPlayer {
+  id: number;
+  name: string;
+  firstname?: string;
+  lastname?: string;
+  age?: number;
+  nationality?: string;
+  position?: string;
+  photo?: string;
+}
 
 @Component({
   selector: 'app-player-create',
@@ -41,10 +58,15 @@ import { PlayerService } from '../../../core/services/player.service';
     IonContent,
     IonList,
     IonItem,
+    IonLabel,
     IonInput,
     IonSelect,
     IonSelectOption,
     IonSpinner,
+    IonSegment,
+    IonSegmentButton,
+    IonSearchbar,
+    IonCheckbox,
   ],
 })
 export class CreatePage {
@@ -75,8 +97,79 @@ export class CreatePage {
   readonly errorMessage = signal<string | null>(null);
   readonly photoPreview = signal<string | null>(null);
 
+  // ─── Tab API-Football ──────────────────────────────────────────────
+  readonly activeTab = signal<'form' | 'external'>('form');
+  readonly externalQuery = signal('');
+  readonly externalResults = signal<ExternalPlayer[]>([]);
+  readonly externalSearching = signal(false);
+  readonly externalError = signal<string | null>(null);
+  readonly selectedIds = signal<Set<number>>(new Set());
+  readonly importing = signal(false);
+
   constructor() {
-    addIcons({ cameraOutline, locationOutline, trashOutline });
+    addIcons({ cameraOutline, cloudDownloadOutline, locationOutline, trashOutline });
+  }
+
+  // ─── Tab switching ─────────────────────────────────────────────────
+
+  onTabChange(event: Event) {
+    const value = (event as CustomEvent).detail.value as 'form' | 'external';
+    this.activeTab.set(value);
+  }
+
+  // ─── Búsqueda externa ──────────────────────────────────────────────
+
+  async onExternalSearch(event: Event) {
+    const target = event.target as HTMLIonSearchbarElement;
+    const value = (target.value || '').trim();
+    this.externalQuery.set(value);
+    if (!value) {
+      this.externalResults.set([]);
+      return;
+    }
+    this.externalSearching.set(true);
+    this.externalError.set(null);
+    try {
+      const results = await firstValueFrom(
+        this.playerService.searchExternal(value),
+      ) as ExternalPlayer[];
+      this.externalResults.set(results);
+    } catch (err) {
+      const msg = (err as { error?: { error?: string } })?.error?.error
+                ?? 'Error buscando en API-Football';
+      this.externalError.set(msg);
+      this.externalResults.set([]);
+    } finally {
+      this.externalSearching.set(false);
+    }
+  }
+
+  toggleSelected(id: number) {
+    const next = new Set(this.selectedIds());
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    this.selectedIds.set(next);
+  }
+
+  isSelected(id: number): boolean {
+    return this.selectedIds().has(id);
+  }
+
+  async importSelected() {
+    const ids = Array.from(this.selectedIds());
+    if (ids.length === 0) return;
+    this.importing.set(true);
+    this.externalError.set(null);
+    try {
+      await firstValueFrom(this.playerService.importExternal(ids));
+      this.router.navigate(['/players'], { replaceUrl: true });
+    } catch (err) {
+      const msg = (err as { error?: { error?: string } })?.error?.error
+                ?? 'No se pudo importar';
+      this.externalError.set(msg);
+    } finally {
+      this.importing.set(false);
+    }
   }
 
   /** Abre cámara / picker de fotos y guarda como data URL (base64). */
