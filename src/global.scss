@@ -164,39 +164,37 @@ h3 { font-size: 18px; margin: 24px 0 12px; }
 .position-badge--Midfielder { background: var(--pos-midfielder); }
 .position-badge--Attacker   { background: var(--pos-attacker); }
 
-// Hero foto en detalle
-.player-hero {
-  margin: -16px -16px 16px;   // sale del padding del ion-content
-  height: 280px;
+// Cabecera del detalle: foto de perfil centrada + nombre debajo
+.player-profile-header {
+  text-align: center;
+  margin: 8px 0 24px;
+
+  h2 {
+    margin: 16px 0 0;
+    font-size: 24px;
+  }
+}
+
+.player-photo {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;          // no se estira: recorta para llenar el cuadrado
   background-color: #e5e7eb;
-  background-size: cover;
-  background-position: center;
-  position: relative;
+  display: block;
+  margin: 0 auto;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
+  border: 4px solid #ffffff;  // anillo blanco que separa de fondos oscuros
 }
-.player-hero::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.55) 100%);
-}
-.player-hero-title {
-  position: absolute;
-  left: 20px;
-  right: 20px;
-  bottom: 16px;
-  color: #fff;
-  z-index: 1;
-}
-.player-hero-title h2 {
-  color: #fff;
-  font-size: 32px;
-  margin: 0 0 4px;
-}
-.player-hero-title p {
-  color: #fff;
-  opacity: .85;
-  margin: 0;
-  font-size: 15px;
+
+.player-photo--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  font-size: 72px;
+  font-weight: 700;
+  font-family: inherit;
 }
 
 // Comment card

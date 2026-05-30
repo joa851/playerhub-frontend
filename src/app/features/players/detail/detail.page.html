@@ -12,16 +12,23 @@
 
   <ng-container *ngIf="!isLoading() && player() as p">
 
-    <!-- HERO: foto a pantalla completa con gradiente y nombre overlay -->
-    <div
-      class="player-hero"
-      [style.backgroundImage]="p.photo ? 'url(' + p.photo + ')' : ''">
-      <div class="player-hero-title">
-        <h2>{{ p.name }}</h2>
-        <p>
-          {{ p.team }}<span *ngIf="p.team && p.league"> · </span>{{ p.league }}
-        </p>
-      </div>
+    <!-- Foto de perfil + nombre debajo -->
+    <div class="player-profile-header">
+      <img
+        *ngIf="p.photo; else placeholderAvatar"
+        [src]="p.photo"
+        [alt]="p.name"
+        class="player-photo" />
+      <ng-template #placeholderAvatar>
+        <div class="player-photo player-photo--placeholder">
+          {{ (p.name || '?').charAt(0) }}
+        </div>
+      </ng-template>
+
+      <h2>{{ p.name }}</h2>
+      <p *ngIf="p.team || p.league" style="color: #6b7280; margin: 4px 0 0">
+        {{ p.team }}<span *ngIf="p.team && p.league"> · </span>{{ p.league }}
+      </p>
     </div>
 
     <!-- Info chips -->
