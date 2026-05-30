@@ -164,6 +164,21 @@ h3 { font-size: 18px; margin: 24px 0 12px; }
 .position-badge--Midfielder { background: var(--pos-midfielder); }
 .position-badge--Attacker   { background: var(--pos-attacker); }
 
+// Badge numérico para el ranking del Equipo Ideal (posición que el LLM le dio)
+.rank-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--ion-color-primary);
+  color: #fff;
+  font: 700 13px/1 'Inter', system-ui, sans-serif;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
 // Cabecera del detalle: foto de perfil centrada + nombre debajo
 .player-profile-header {
   text-align: center;

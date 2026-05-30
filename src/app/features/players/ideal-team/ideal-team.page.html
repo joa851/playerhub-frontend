@@ -1,0 +1,113 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/players"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Equipo Ideal</ion-title>
+  </ion-toolbar>
+
+  <ion-toolbar>
+    <app-backend-toggle></app-backend-toggle>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Cabecera explicativa -->
+  <div style="text-align: center; margin: 8px 0 24px">
+    <ion-icon
+      name="sparkles-outline"
+      style="font-size: 48px; color: var(--ion-color-primary)">
+    </ion-icon>
+    <h2 style="margin: 12px 0 4px; font-size: 22px; font-weight: 700">
+      Equipo Ideal
+    </h2>
+    <p style="color: #6b7280; margin: 0; max-width: 480px; margin-inline: auto">
+      Gemini analiza los jugadores guardados en la base de datos y propone una
+      alineación. El resultado depende del backend activo (Node o Java) porque
+      cada uno tiene su propia BD.
+    </p>
+  </div>
+
+  <!-- CTA generar -->
+  <ion-button
+    expand="block"
+    color="primary"
+    [disabled]="isGenerating()"
+    (click)="generate()">
+    <ion-icon
+      slot="start"
+      [name]="hasGenerated() ? 'refresh-outline' : 'sparkles-outline'">
+    </ion-icon>
+    <ion-spinner *ngIf="isGenerating()" name="dots"></ion-spinner>
+    <span *ngIf="!isGenerating()">
+      {{ hasGenerated() ? 'Generar de nuevo' : 'Generar equipo' }}
+    </span>
+  </ion-button>
+
+  <!-- Error -->
+  <p
+    *ngIf="errorMessage()"
+    style="color: var(--ion-color-danger); text-align: center; margin-top: 16px">
+    {{ errorMessage() }}
+  </p>
+
+  <!-- Estado inicial: nada pedido aún -->
+  <p
+    *ngIf="!hasGenerated() && !isGenerating()"
+    style="text-align: center; color: #9ca3af; margin-top: 32px">
+    Pulsa el botón para que el LLM genere una propuesta.
+  </p>
+
+  <!-- Resultado: lista ordenada por el LLM -->
+  <ion-list
+    *ngIf="hasGenerated() && !isGenerating() && players().length > 0"
+    lines="none"
+    class="ion-margin-top">
+
+    <h3 style="margin: 16px 4px 8px; color: #374151">
+      Propuesta del modelo · {{ players().length }} jugador{{ players().length > 1 ? 'es' : '' }}
+    </h3>
+
+    <ion-item
+      *ngFor="let p of players(); let i = index"
+      class="player-card"
+      button
+      detail="false"
+      [routerLink]="['/players', p._id]">
+
+      <!-- Número de orden propuesto por el LLM -->
+      <div slot="start" class="rank-badge">{{ i + 1 }}</div>
+
+      <!-- Avatar -->
+      <div
+        slot="start"
+        class="player-avatar"
+        [style.backgroundImage]="p.photo ? 'url(' + p.photo + ')' : ''">
+        <span *ngIf="!p.photo">{{ (p.name || '?').charAt(0) }}</span>
+      </div>
+
+      <ion-label>
+        <h2 style="font-size: 17px; font-weight: 600; margin: 0">{{ p.name }}</h2>
+        <p *ngIf="p.team || p.league" style="color: #6b7280; margin: 2px 0 0">
+          {{ p.team }}<span *ngIf="p.team && p.league"> · </span>{{ p.league }}
+        </p>
+      </ion-label>
+
+      <span
+        *ngIf="p.position"
+        slot="end"
+        class="position-badge"
+        [ngClass]="'position-badge--' + p.position">
+        {{ p.position }}
+      </span>
+    </ion-item>
+  </ion-list>
+
+  <!-- Resultado vacío -->
+  <p
+    *ngIf="hasGenerated() && !isGenerating() && !errorMessage() && players().length === 0"
+    style="text-align: center; color: #6b7280; margin-top: 32px">
+    No hay jugadores en la base de datos para generar un equipo.
+  </p>
+</ion-content>

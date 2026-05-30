@@ -27,6 +27,12 @@ export const routes: Routes = [
       import('./features/players/create/create.page').then((m) => m.CreatePage),
   },
   {
+    // Debe ir ANTES de players/:id para que "ideal-team" no se tome como id.
+    path: 'players/ideal-team',
+    loadComponent: () =>
+      import('./features/players/ideal-team/ideal-team.page').then((m) => m.IdealTeamPage),
+  },
+  {
     path: 'players/:id',
     loadComponent: () =>
       import('./features/players/detail/detail.page').then((m) => m.DetailPage),

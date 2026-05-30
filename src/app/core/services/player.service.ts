@@ -104,4 +104,20 @@ export class PlayerService {
       map((arr) => arr.map((p) => this.normalize(p))),
     );
   }
+
+  // ─── LLM (Equipo Ideal) ──────────────────────────────────────────────
+
+  /**
+   * Pide al backend que genere el "Equipo Ideal" con el LLM (Gemini).
+   * Devuelve la lista de jugadores en el orden sugerido por el modelo.
+   * Funciona en MEAN y en Spring (ambos exponen POST /ideal-team).
+   */
+  idealTeam(): Observable<Player[]> {
+    return this.http.post<Player[]>(
+      this.backend.buildPlayersUrl('ideal-team'),
+      {},
+    ).pipe(
+      map((arr) => arr.map((p) => this.normalize(p))),
+    );
+  }
 }

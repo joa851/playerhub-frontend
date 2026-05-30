@@ -3,6 +3,10 @@
     <ion-title>Players</ion-title>
 
     <ion-buttons slot="end">
+      <ion-button [routerLink]="['/players/ideal-team']" fill="clear" title="Equipo Ideal (LLM)">
+        <ion-icon slot="icon-only" name="sparkles-outline"></ion-icon>
+      </ion-button>
+
       <ion-button *ngIf="isAuthenticated()" [routerLink]="['/players/new']" fill="clear">
         <ion-icon slot="icon-only" name="add-outline"></ion-icon>
       </ion-button>
