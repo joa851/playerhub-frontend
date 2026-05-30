@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import {
@@ -42,7 +42,7 @@ import { BackendToggleComponent } from '../../../shared/components/backend-toggl
     BackendToggleComponent,
   ],
 })
-export class ListPage implements OnInit {
+export class ListPage {
   private readonly playerService = inject(PlayerService);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
@@ -58,18 +58,17 @@ export class ListPage implements OnInit {
     addIcons({ logOutOutline, logInOutline, personAddOutline, addOutline });
   }
 
-  ngOnInit() {
-    this.playerService.list().subscribe();
-  }
-
   /**
-   *  Limpiamos el campo de busqueda cada vez que entramos a la página, para evitar residuos.
+   * Se dispara cada vez que la página se hace visible (primera carga
+   * y también al volver desde /players/new o /players/:id). Así, si el
+   * usuario acaba de crear/importar un jugador, lo verá en el listado
+   * sin tener que recargar manualmente.
+   *
+   * Aprovechamos para limpiar el filtro y partir siempre del estado base.
    */
   ionViewWillEnter() {
-    if (this.searchTerm()) {
-      this.searchTerm.set('');
-      this.playerService.list().subscribe();
-    }
+    this.searchTerm.set('');
+    this.playerService.list().subscribe();
   }
 
   onSearch(event: Event) {
