@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">PlayerHub</string>
+    <string name="title_activity_main">PlayerHub</string>
+    <string name="package_name">me.joa851.playerhub</string>
+    <string name="custom_url_scheme">me.joa851.playerhub</string>
+</resources>

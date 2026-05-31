@@ -70,10 +70,19 @@ testem.log
 Thumbs.db
 
 # Capacitor native platforms
-/android
-/ios
+# Mantenemos /android en el repo (Capacitor recomienda commitearlo)
+# para que CI/CD pueda construir el APK sin regenerar la plataforma.
+# /android        ← commiteado
+/ios              # iOS sí se genera bajo demanda
+
+# Outputs/artefactos de build de Android (no commitear)
+android/app/build/
+android/.gradle/
+android/build/
+android/local.properties
+android/.idea/
+android/captures/
 
 # Claude
 .claude/
 PlayerHub.apk
-android/app/build/
