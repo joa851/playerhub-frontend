@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -39,6 +39,17 @@ export class RegisterPage {
 
   readonly errorMessage = signal<string | null>(null);
   readonly isLoading = signal(false);
+
+  constructor() {
+    // Si el usuario ya tiene sesión activa (p.ej. recargó la app
+    // estando logueado y abrió /auth/register), saltamos directos
+    // al listado en vez de mostrarle el formulario.
+    effect(() => {
+      if (this.auth.isAuthenticated()) {
+        this.router.navigateByUrl('/players', { replaceUrl: true });
+      }
+    });
+  }
 
   async submit() {
     if (this.form.invalid) return;

@@ -38,6 +38,6 @@ export const routes: Routes = [
       import('./features/players/detail/detail.page').then((m) => m.DetailPage),
   },
 
-  // Default → listado.
-  { path: '', redirectTo: 'players', pathMatch: 'full' },
+  // Default → login (el usuario puede continuar como invitado desde ahí).
+  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
 ];

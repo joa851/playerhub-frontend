@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -39,6 +39,17 @@ export class LoginPage {
 
   readonly errorMessage = signal<string | null>(null);
   readonly isLoading = signal(false);
+
+  constructor() {
+    // Si Firebase resuelve que el usuario YA tiene sesión activa
+    // (token en localStorage, no caducado), saltamos directos al
+    // listado sin obligarle a re-autenticarse.
+    effect(() => {
+      if (this.auth.isAuthenticated()) {
+        this.router.navigateByUrl('/players', { replaceUrl: true });
+      }
+    });
+  }
 
   async submit() {
     if (this.form.invalid) return;
