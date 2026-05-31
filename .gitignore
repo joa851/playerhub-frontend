@@ -75,3 +75,5 @@ Thumbs.db
 
 # Claude
 .claude/
+PlayerHub.apk
+android/app/build/
