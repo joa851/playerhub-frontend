@@ -13,7 +13,7 @@ permissions:
   pull-requests: write     # para que Sonar comente PRs
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: '22'   # Capacitor CLI 8 exige Node ≥22
 
 jobs:
   # ─────────────────────────────────────────────────────────────────────
