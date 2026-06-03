@@ -33,6 +33,14 @@ export const routes: Routes = [
       import('./features/players/ideal-team/ideal-team.page').then((m) => m.IdealTeamPage),
   },
   {
+    // Edición de jugador (solo admin). Va ANTES de players/:id para que
+    // el router no consuma "edit" como un id.
+    path: 'players/:id/edit',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/players/edit/edit.page').then((m) => m.EditPage),
+  },
+  {
     path: 'players/:id',
     loadComponent: () =>
       import('./features/players/detail/detail.page').then((m) => m.DetailPage),

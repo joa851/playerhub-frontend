@@ -1,0 +1,133 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button [defaultHref]="'/players/' + (playerId() || '')"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Editar jugador</ion-title>
+  </ion-toolbar>
+
+  <ion-toolbar>
+    <app-backend-toggle></app-backend-toggle>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-spinner *ngIf="isLoading()"></ion-spinner>
+
+  <form *ngIf="!isLoading()" [formGroup]="form" (ngSubmit)="submit()">
+
+    <!-- Foto -->
+    <ion-list>
+      <ion-item>
+        <ion-input
+          formControlName="photo"
+          label="Foto (URL o usa la cámara)"
+          labelPlacement="floating">
+        </ion-input>
+      </ion-item>
+    </ion-list>
+
+    <div style="display: flex; gap: 8px; margin: 8px 0">
+      <ion-button fill="outline" (click)="takePhoto()">
+        <ion-icon slot="start" name="camera-outline"></ion-icon>
+        Cámara
+      </ion-button>
+      <ion-button
+        *ngIf="photoPreview() || form.controls.photo.value"
+        fill="outline"
+        color="medium"
+        (click)="clearPhoto()">
+        <ion-icon slot="start" name="trash-outline"></ion-icon>
+        Quitar
+      </ion-button>
+    </div>
+
+    <img
+      *ngIf="photoPreview() as src"
+      [src]="src"
+      alt="preview"
+      style="max-width: 200px; border-radius: 8px; display: block; margin-bottom: 16px" />
+
+    <!-- Datos básicos -->
+    <ion-list>
+      <ion-item>
+        <ion-input formControlName="name" label="Nombre *" labelPlacement="floating"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input formControlName="firstname" label="Primer apellido" labelPlacement="floating"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input formControlName="lastname" label="Segundo apellido" labelPlacement="floating"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input formControlName="age" type="number" label="Edad" labelPlacement="floating"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input formControlName="nationality" label="Nacionalidad" labelPlacement="floating"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input formControlName="height" label="Altura (ej. 184 cm)" labelPlacement="floating"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input formControlName="weight" label="Peso (ej. 80 kg)" labelPlacement="floating"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input formControlName="number" type="number" label="Dorsal" labelPlacement="floating"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-select
+          formControlName="position"
+          label="Posición"
+          labelPlacement="floating"
+          interface="popover">
+          <ion-select-option value="">—</ion-select-option>
+          <ion-select-option value="Goalkeeper">Goalkeeper</ion-select-option>
+          <ion-select-option value="Defender">Defender</ion-select-option>
+          <ion-select-option value="Midfielder">Midfielder</ion-select-option>
+          <ion-select-option value="Attacker">Attacker</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-input formControlName="team" label="Equipo" labelPlacement="floating"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input formControlName="league" label="Liga" labelPlacement="floating"></ion-input>
+      </ion-item>
+    </ion-list>
+
+    <!-- Geolocalización -->
+    <h3 class="ion-margin-top">Ubicación</h3>
+    <ion-list formGroupName="location">
+      <ion-item>
+        <ion-input formControlName="latitude" type="number" label="Latitud" labelPlacement="floating"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input formControlName="longitude" type="number" label="Longitud" labelPlacement="floating"></ion-input>
+      </ion-item>
+    </ion-list>
+
+    <ion-button fill="outline" (click)="useMyLocation()" class="ion-margin-top">
+      <ion-icon slot="start" name="location-outline"></ion-icon>
+      Usar mi ubicación
+    </ion-button>
+
+    <!-- Submit -->
+    <ion-button
+      expand="block"
+      color="primary"
+      type="submit"
+      [disabled]="form.invalid || isSubmitting()"
+      class="ion-margin-top">
+      <ion-spinner *ngIf="isSubmitting()" name="dots"></ion-spinner>
+      <span *ngIf="!isSubmitting()">Guardar cambios</span>
+    </ion-button>
+
+    <p
+      *ngIf="errorMessage()"
+      style="color: var(--ion-color-danger)"
+      class="ion-margin-top">
+      {{ errorMessage() }}
+    </p>
+  </form>
+</ion-content>

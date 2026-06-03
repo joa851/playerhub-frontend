@@ -25,6 +25,7 @@ import {
   addOutline,
   trashOutline,
   sparklesOutline,
+  createOutline,
 } from 'ionicons/icons';
 import { PlayerService } from '../../../core/services/player.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -68,7 +69,7 @@ export class ListPage {
   readonly searchTerm = signal('');
 
   constructor() {
-    addIcons({ logOutOutline, logInOutline, personAddOutline, addOutline, trashOutline, sparklesOutline });
+    addIcons({ logOutOutline, logInOutline, personAddOutline, addOutline, trashOutline, sparklesOutline, createOutline });
   }
 
   /**

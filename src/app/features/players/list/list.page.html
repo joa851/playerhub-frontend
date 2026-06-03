@@ -78,6 +78,17 @@
         *ngIf="isAdmin()"
         slot="end"
         fill="clear"
+        color="primary"
+        [routerLink]="['/players', p._id, 'edit']"
+        (click)="$event.stopPropagation()"
+        title="Editar jugador">
+        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+      </ion-button>
+
+      <ion-button
+        *ngIf="isAdmin()"
+        slot="end"
+        fill="clear"
         color="danger"
         (click)="deletePlayer(p, $event)">
         <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
