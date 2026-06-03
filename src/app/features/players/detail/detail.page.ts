@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
+  AlertController,
   IonBackButton,
   IonButton,
   IonButtons,
@@ -57,6 +58,7 @@ export class DetailPage implements OnInit {
   private readonly playerService = inject(PlayerService);
   private readonly auth = inject(AuthService);
   private readonly fb = inject(FormBuilder);
+  private readonly alertCtrl = inject(AlertController);
 
   readonly player = signal<Player | null>(null);
   readonly isLoading = signal(false);
@@ -144,10 +146,30 @@ export class DetailPage implements OnInit {
     }
   }
 
+  /**
+   * Pide confirmación antes de borrar el comentario. Solo lo verá un admin
+   * (la UI lo oculta con *ngIf="isAdmin()") y el backend lo exige también
+   * en MEAN con requireAdmin.
+   */
   async deleteComment(commentId: string | undefined) {
     const p = this.player();
     if (!p?._id || !commentId) return;
-    await firstValueFrom(this.playerService.deleteComment(p._id, commentId));
-    await this.refreshPlayer();
+
+    const alert = await this.alertCtrl.create({
+      header: 'Borrar comentario',
+      message: '¿Eliminar este comentario? Esta acción no se puede deshacer.',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Borrar',
+          role: 'destructive',
+          handler: async () => {
+            await firstValueFrom(this.playerService.deleteComment(p._id!, commentId));
+            await this.refreshPlayer();
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 }

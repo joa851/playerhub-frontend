@@ -92,12 +92,28 @@ export class ListPage {
     this.playerService.list(value ? { name: value } : {}).subscribe();
   }
 
+  /**
+   * Pide confirmación antes de cerrar sesión para evitar clics accidentales.
+   * Tras confirmar, hace logout y vuelve al estado de invitado (no navega).
+   */
   async logout() {
-    await this.auth.logout();
-    // No navegamos: el usuario puede seguir como invitado.
-    // Pero sí limpiamos el filtro porque "estamos volviendo" al estado base.
-    this.searchTerm.set('');
-    this.playerService.list().subscribe();
+    const alert = await this.alertCtrl.create({
+      header: 'Cerrar sesión',
+      message: '¿Seguro que quieres cerrar tu sesión?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Cerrar sesión',
+          role: 'destructive',
+          handler: async () => {
+            await this.auth.logout();
+            this.searchTerm.set('');
+            this.playerService.list().subscribe();
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 
   /**
